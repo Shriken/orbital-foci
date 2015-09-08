@@ -1,3 +1,7 @@
+'use strict';
+
+var Victor = require('victor');
+
 var G = 1;
 var SQUARE_RAD = 5;
 
@@ -15,19 +19,16 @@ var run = function() {
 var init = function(state) {
 	state.canvas = document.getElementById('canvas');
 	state.bigBody = {
-		x: 0,
-		y: 0,
-		vx: 0,
-		vy: 0,
+		pos: new Victor(0, 0),
+		vel: new Victor(0, 0),
 		m: 100,
 	};
 
 	var orbitRad = 300;
+	var orbitVel = Math.sqrt(G * state.bigBody.m / orbitRad);
 	state.smallBody = {
-		x: orbitRad,
-		y: 0,
-		vx: 0,
-		vy: Math.sqrt(G * state.bigBody.m / orbitRad),
+		pos: new Victor(orbitRad, 0),
+		vel: new Victor(0, orbitVel),
 		m: 1,
 	};
 };
@@ -36,12 +37,11 @@ var loop = function(state) {
 	update(state);
 	render(state);
 
-	setTimeout(function() { loop(state); }, 30);
+	setTimeout(() => loop(state), 30);
 };
 
 var update = function(state) {
-	state.smallBody.x += state.smallBody.vx;
-	state.smallBody.y += state.smallBody.vy;
+	state.smallBody.pos.add(state.smallBody.vel);
 };
 
 var render = function(state) {
@@ -50,23 +50,22 @@ var render = function(state) {
 	ctx.save();
 
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
-
 	ctx.translate(canvas.width / 2, canvas.height / 2);
-	ctx.fillStyle = '#ff0000';
-	ctx.fillRect(
-		state.bigBody.x - SQUARE_RAD,
-		state.bigBody.y - SQUARE_RAD,
-		SQUARE_RAD * 2,
-		SQUARE_RAD * 2
-	);
-	ctx.fillRect(
-		state.smallBody.x - SQUARE_RAD,
-		state.smallBody.y - SQUARE_RAD,
-		SQUARE_RAD * 2,
-		SQUARE_RAD * 2
-	);
+
+	drawBody(ctx, state.bigBody);
+	drawBody(ctx, state.smallBody);
 
 	ctx.restore();
+};
+
+var drawBody = function(ctx, body) {
+	ctx.fillStyle = '#ff0000';
+	ctx.fillRect(
+		body.pos.x - SQUARE_RAD,
+		body.pos.y - SQUARE_RAD,
+		SQUARE_RAD * 2,
+		SQUARE_RAD * 2
+	);
 };
 
 window.onload = run;
