@@ -2,7 +2,7 @@
 
 var Victor = require('victor');
 
-var G = 1;
+var G = 100;
 var SQUARE_RAD = 5;
 
 var run = function() {
@@ -42,6 +42,17 @@ var loop = function(state) {
 
 var update = function(state) {
 	state.smallBody.pos.add(state.smallBody.vel);
+
+	var radSq = state.bigBody.pos.clone()
+		.subtract(state.smallBody.pos)
+		.lengthSq();
+	var accelMag = G * state.bigBody.m / radSq;
+	var accel = state.bigBody.pos.clone()
+		.subtract(state.smallBody.pos)
+		.normalize()
+		.multiply(new Victor(accelMag, accelMag));
+
+	state.smallBody.vel.add(accel);
 };
 
 var render = function(state) {
