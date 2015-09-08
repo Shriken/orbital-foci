@@ -1,14 +1,21 @@
 {
   "name": "orbital-foci",
   "version": "1.0.0",
-  "description": "",
+  "description": "Investigation of orbital foci",
   "main": "Gruntfile.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Zane Sterling @Shriken",
   "license": "ISC",
+  "repository": "http://github.com/Shriken/orbital-foci",
   "dependencies": {
-    "grunt": "^0.4.5"
+    "babelify": "^6.3.0",
+    "grunt": "^0.4.5",
+    "grunt-browserify": "^4.0.1",
+    "grunt-concurrent": "^2.0.3",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-shell": "^1.1.2",
+    "load-grunt-tasks": "^3.2.0"
   }
 }
