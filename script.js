@@ -8,7 +8,7 @@ var SQUARE_RAD = 5;
 var run = function() {
 	var state = {
 		canvas: null,
-		bigBody: null,
+		largeBody: null,
 		smallBody: null,
 	};
 
@@ -18,14 +18,14 @@ var run = function() {
 
 var init = function(state) {
 	state.canvas = document.getElementById('canvas');
-	state.bigBody = {
+	state.largeBody = {
 		pos: new Victor(0, 0),
 		vel: new Victor(0, 0),
 		m: 100,
 	};
 
 	var orbitRad = 300;
-	var orbitVel = Math.sqrt(G * state.bigBody.m / orbitRad);
+	var orbitVel = Math.sqrt(G * state.largeBody.m / orbitRad);
 	state.smallBody = {
 		pos: new Victor(orbitRad, 0),
 		vel: new Victor(0, orbitVel),
@@ -43,11 +43,11 @@ var loop = function(state) {
 var update = function(state) {
 	state.smallBody.pos.add(state.smallBody.vel);
 
-	var radSq = state.bigBody.pos.clone()
+	var radSq = state.largeBody.pos.clone()
 		.subtract(state.smallBody.pos)
 		.lengthSq();
-	var accelMag = G * state.bigBody.m / radSq;
-	var accel = state.bigBody.pos.clone()
+	var accelMag = G * state.largeBody.m / radSq;
+	var accel = state.largeBody.pos.clone()
 		.subtract(state.smallBody.pos)
 		.normalize()
 		.multiply(new Victor(accelMag, accelMag));
@@ -63,7 +63,8 @@ var render = function(state) {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	ctx.translate(canvas.width / 2, canvas.height / 2);
 
-	drawBody(ctx, state.bigBody);
+	drawOrbit(ctx, state);
+	drawBody(ctx, state.largeBody);
 	drawBody(ctx, state.smallBody);
 
 	ctx.restore();
@@ -77,6 +78,17 @@ var drawBody = function(ctx, body) {
 		SQUARE_RAD * 2,
 		SQUARE_RAD * 2
 	);
+};
+
+var drawOrbit = function(ctx, state) {
+	var rad = state.smallBody.pos.clone()
+		.subtract(state.largeBody.pos)
+		.length();
+
+	ctx.strokeStyle = '#ff0000';
+	ctx.beginPath();
+	ctx.ellipse(0, 0, rad, rad, 0, 0, 2 * Math.PI);
+	ctx.stroke();
 };
 
 window.onload = run;
